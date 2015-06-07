@@ -1,0 +1,6 @@
+---
+
+- hosts: musicplayers
+  gather_facts: false
+  roles:
+    - basic-arch

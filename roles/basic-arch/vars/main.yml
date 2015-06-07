@@ -1,0 +1,8 @@
+---
+
+# Uncomment and add your own users if needed
+# admin_users:
+#   - name: "karl-ove"
+#     key_path: "user1_key.pub"
+#   - name: "maggan"
+#     key_path: "/home/rasmus/.ssh/id_rsa.pub"

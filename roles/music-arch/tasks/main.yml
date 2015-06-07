@@ -1,0 +1,9 @@
+---
+
+- name: MUSIC | Update pacman package list
+  sudo: yes
+  pacman: update_cache=yes
+
+- name: MUSIC | Install mopidy
+  sudo: yes
+  pacman: name=mopidy state=present

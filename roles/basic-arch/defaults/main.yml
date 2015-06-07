@@ -1,0 +1,5 @@
+---
+
+admin_users:
+  - name: "{{ lookup('env', 'USER') }}"
+    key_path: "{{ lookup('env', 'HOME') }}/.ssh/id_rsa.pub"

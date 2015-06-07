@@ -1,0 +1,51 @@
+---
+
+- name: INIT | Check for Python 2
+  raw: pacman -Q python2
+  register: python_check
+  ignore_errors: yes
+
+- name: INIT | Install Python 2
+  raw: pacman -S --noconfirm python2
+  when: "python_check.rc != 0"
+
+- name: INIT | Install sudo
+  sudo: yes
+  pacman:
+    name: sudo
+    state: present
+
+- name: INIT | Create admins system group
+  sudo: yes
+  group:
+    name: admins
+    system: yes
+    state: present
+
+- name: INIT | Install sudoers file for admin accounts
+  sudo: yes
+  lineinfile: "dest=/etc/sudoers.d/admins state=present create=yes regexp='^%admins' line='%admins ALL=(ALL:ALL) NOPASSWD: SETENV: ALL' owner=root group=root mode=0440"
+
+- name: INIT | Create admin accounts
+  sudo: yes
+  user: 
+    name: "{{ item.name }}"
+    state: present
+    shell: /bin/bash
+    groups: admins
+  with_items: admin_users
+
+- name: INIT | Install ssh public keys
+  sudo: yes
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', item.key_path) }}"
+  with_items: admin_users
+
+- name: INIT | Turn off root access via ssh
+  sudo: yes
+  lineinfile: "dest=/etc/ssh/sshd_config state=present regexp='^#?PermitRootLogin' line='PermitRootLogin no'"
+
+- name: INIT | Restart sshd
+  sudo: yes
+  service: name=sshd state=restarted
